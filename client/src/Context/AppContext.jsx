@@ -4,6 +4,11 @@ import { useState } from "react";
 import { dummyProducts } from "../assets/assets";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
+
+
+axios.defaults.withCredentials=true;
+axios.defaults.baseURL= import.meta.env.VITE_BACKEND_URL;
 
 export const AppContext = createContext();
 
@@ -91,7 +96,9 @@ export const AppContextProvider =({children})=>{
          setshowuserlogin, showuserlogin,
          carditem,setcarditem,
          products,currency,
-         addtocart,updatetocart,removetocart,searchQuery,setsearchQuery,getCartAmount,getCarditems
+         addtocart,updatetocart,removetocart,searchQuery,
+         setsearchQuery,getCartAmount,getCarditems,
+         axios
           };
 return <AppContext.Provider value={value} >
     {children}
