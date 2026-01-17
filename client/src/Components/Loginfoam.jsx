@@ -1,5 +1,6 @@
 import React from 'react'
 import { useAppContext } from '../Context/Appcontext';
+import toast from 'react-hot-toast';
 
 export default function Loginfoam() {
     const [state, setState] = React.useState("login");
@@ -7,15 +8,30 @@ export default function Loginfoam() {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
 
-    const { setshowuserlogin,setuser} =useAppContext(); 
+    const { setshowuserlogin,setuser, navigate, axios} =useAppContext(); 
 
     const submithandler = async (e)=>{
-     e.preventDefault(); 
-     setuser({
-        email:"test@greatstack.dev",
-        name:"GreatStack",
-     })
-     setshowuserlogin(false);
+     try {
+        e.preventDefault(); 
+      
+     const {data} = await axios.post(`api/user/${state}`,{
+        name,
+        email,
+        password
+     });
+      if(data.success){
+        navigate('/')
+        setuser(data.user)
+        setshowuserlogin(false);
+        
+      }else{
+        toast.error(data.meassage)
+      }
+     } catch (error) {
+        toast.error(error.meassage)
+     }
+     
+
     }
 
     return (

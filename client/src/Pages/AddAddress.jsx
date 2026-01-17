@@ -1,6 +1,9 @@
 import React from 'react'
 import { assets } from '../assets/assets'
 import { useState } from 'react';
+import { useAppContext } from '../Context/Appcontext';
+import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
 
 //////////////////////// Input field Component  /////////////////////
@@ -17,6 +20,9 @@ const InputField = ({type, placeholder,name, handleChange,address })=>(
 
 
 export default function AddAddress () {
+
+   const {axios, user,navigate} = useAppContext();
+
   const [address, setaddress] = useState({
     
     firstName:'',
@@ -41,8 +47,23 @@ export default function AddAddress () {
 }
      const onsubmitHandler = async (e)=>{
         e.preventDefault();
+        try {
+          const {data}= await axios.post('/api/address/add',{address})
+          if(data.success){
+            toast.success(data.message)
+            navigate('/cart')
+          }else{
+            toast.error(data.message)
+          }
+        } catch (error) {
+          toast.error(error.message)
         }
-
+        }
+       useEffect(()=>{
+        if(!user){
+          navigate('/cart')
+        }
+       },[])
 
 
   return (

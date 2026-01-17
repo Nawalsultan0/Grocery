@@ -4,12 +4,12 @@
    import 'dotenv/config' 
    import ConnectDB from './Configs/DB.js';
    import userRouter from './Routes/userRouter.js';
-import sellerRoutes from './Routes/sellerRoutes.js';
-import ConnectCloudinary from './Configs/Cloudinary.js';
-import ProductRoute from './Routes/ProductRoute.js';
-import cartRoute from './Routes/cartRoute.js';
-import addressRoute from './Routes/addressRoute.js';
-import orderRouter from './Routes/orderRoute.js';
+   import sellerRoutes from './Routes/sellerRoutes.js';
+   import ConnectCloudinary from './Configs/Cloudinary.js';
+   import ProductRoute from './Routes/ProductRoute.js';
+   import cartRoute from './Routes/cartRoute.js';
+   import addressRoute from './Routes/addressRoute.js';
+   import orderRouter from './Routes/orderRoute.js';
 
    const app = express();
    const port = process.env.PORT || 4000;
@@ -21,25 +21,11 @@ import orderRouter from './Routes/orderRoute.js';
    ////Middleware configuration ////////////
    app.use(cors({
       origin:allowedOrigins,
-      credential:true,
+      credentials:true
        
     },
 
    ));
-
-
-
-   /// ✅ Manual fix for preflight requests (CORS OPTIONS)
-
-   app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.sendStatus(200);
-});
-
-
 
 
    app.use(express.json());

@@ -17,7 +17,7 @@ export const AppContextProvider =({children})=>{
    
     const navigate = useNavigate();
     const [user, setuser] = useState(false)
-    const [isSeller, setisSeller] = useState(false)
+    const [isSeller, setisSeller] = useState(true)
     const [showuserlogin, setshowuserlogin] = useState(false)
     
     const [carditem, setcarditem] = useState({})
@@ -27,14 +27,51 @@ export const AppContextProvider =({children})=>{
    
     const currency =import.meta.env.VITE_CURRENCY;
 
-    const fetchProducts = async ()=>{
-        setproducts(dummyProducts)
-    }  
-     ////fetch All product //////////
-    useEffect(() => {
-     fetchProducts();
-    }, [])
     
+      /////fetch seller status 
+      const fetchSeller = async()=>{
+        try {
+           
+         const {data} = await axios.get('/api/seller/is-auth');
+            if(data.success){
+                setisSeller(true)
+            }else{
+                setisSeller(false)
+            }
+        } catch (error) {
+            setisSeller(false)
+        }
+      }
+       
+     /// fetch User auth status , User data and cart items 
+     const fetchUser = async ()=> {
+        try {
+            const {data} = await axios.get('/api/user/is-auth');
+            if(data.success){
+                setuser(data.user)
+                setcarditem(data.user.carditem)
+            }
+        } catch (error) {
+            setuser(null)
+
+        }
+     }
+
+
+
+     ////fetch All product //////////
+     const fetchProducts = async () => {
+        try {
+            const {data} = await axios.get('/api/product/list')
+            if(data.success){
+                setproducts(data.products)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+     }    
     ////////Add Product to the card///////
     const addtocart =(itemID)=>{
         let cardData = structuredClone(carditem)
@@ -88,6 +125,32 @@ export const AppContextProvider =({children})=>{
         }
         return Math.floor(totalAmount*100)/100;
          }
+
+
+         useEffect(()=>{
+            fetchSeller()
+            fetchProducts()
+            fetchUser();
+         },[])
+          
+         ///update data base cart items
+
+            useEffect(()=>{
+              const updateCart = async () => {
+                try {
+                    const {data}=await axios.post('/api/cart/update',{carditem} )
+                    if(!data.success){
+                        toast.error(data.message)
+                    }
+                } catch (error) {
+                           toast.error(error.message)
+                }
+              }
+              if(user){
+                updateCart()
+              }
+            },[carditem])
+
   
     const value={
         navigate,
@@ -98,7 +161,7 @@ export const AppContextProvider =({children})=>{
          products,currency,
          addtocart,updatetocart,removetocart,searchQuery,
          setsearchQuery,getCartAmount,getCarditems,
-         axios
+         axios, fetchProducts
           };
 return <AppContext.Provider value={value} >
     {children}

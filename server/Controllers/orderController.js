@@ -10,7 +10,8 @@ import Product from "../Modles/Product.js";
 /// place order COD :/api/order/cod
 export const placeOrderCOD = async (req,res) => {
     try {
-        const {userId, items ,address}= req.body;
+        const userId=req.userId;
+        const { items ,address}= req.body;
         if(!address || items.length === 0){
             return res.json({success:false, message:"Invalid data"})
         }
@@ -31,6 +32,7 @@ export const placeOrderCOD = async (req,res) => {
         address,
         paymentType:"COD",
       });
+       await User.findByIdAndUpdate(userId, { cartItems: {} });
       return res.json({success:true, message:"Order Placed Successsfully"})
     } 
 catch (error) {
@@ -42,8 +44,8 @@ catch (error) {
 // get order detail of the by user Id : / api/order/user
 export const getUserOrders  = async (req, res) => {
     try {
-        const {userId}= req.body;
-        const orders = await Order.find({
+        const userId= req.userId;
+        const {orders} = await Order.find({
             userId,
             $or:[{paymentType:"COD"},{isPaid:true}]
         }).populate("items.product address").sort({ createdAt:-1 });

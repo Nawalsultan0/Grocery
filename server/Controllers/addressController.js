@@ -8,8 +8,9 @@ import Address from "../Modles/Address.js"
 
 export const addAdress = async (req,res) => {
     try {
-        const {address, userId}= req.body
-        await Address.create({...address,userId})
+        const userId = req.userId
+        const {address}= req.body
+        await Address.create({...address},userId)
         res.json({success:true, message:"Addrss Added successfully"})
     } catch (error) {
         console.log(error.message)
@@ -22,8 +23,8 @@ export const addAdress = async (req,res) => {
 
 export const getAddress = async (req,res)=>{
     try {
-        const {userId} = req.body
-        const addresses = await Address.find({userId})
+        const userId = req.userId
+        const addresses = await Address.findById(userId)
         res.json({success:true, addresses})
     } catch (error) {
         console.log(error.message)

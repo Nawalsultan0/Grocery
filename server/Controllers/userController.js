@@ -82,7 +82,7 @@ export const login = async(req,res)=>{
 ////check Auth :/api/user/is-auth
 export const Auth = async(req,res)=>{
 try{
-    const {userId}= req.body;
+    const userId= req.userId;
     ////select userid to remove password  data 
     const user = await User.findById(userId).select("-password")
     return res.json({success:true,user});

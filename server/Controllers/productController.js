@@ -12,7 +12,7 @@ export const addProduct = async(req,res)=>{
         const images = req.files;
 
         let imagesUrl = await Promise.all(
-            images.map( async (item)=>{
+            images.map( async (item)=>{     
            let result = await cloudinary.uploader.upload(item.path,{resource_type:'image'})
            return result.secure_url;
 
@@ -48,8 +48,8 @@ try {
 // Get singal product :/api/product/id
 export const productId = async(req,res)=>{
 try {
-    const {id} = req.body
-    const product = await Product.findById(id)
+    const userId = req.userId;
+        const product = await Product.findById(userId)
         res.json({success:true, product})
 } catch (error) {
       console.log(error.message);
@@ -61,8 +61,9 @@ try {
 //change product inStock :/api/product/stock
 export const changeStock = async(req,res)=>{
 try {
-    const {id , inStock } = req.body;
-    await Product.findByIdAndUpdate(id,{inStock})
+    const userId = req.userId
+    const { inStock } = req.body;
+    await Product.findByIdAndUpdate(userId,{inStock})
     res.json({success:true, message:'Stock Updated'})
 } catch (error) {
       console.log(error.message);
