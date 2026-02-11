@@ -17,13 +17,13 @@ password:{
 },
   cardItems:{
     type:Object,
-     default:{}
+     default:{},
 },
 
 
 /////////user data with empty object /////////////////
 },{minimize:false})
 
-const User = mongoose.models.user  || mongoose.model('user',userSchema)
+const User = mongoose.models.user  || mongoose.model('User',userSchema)
 
 export default User;

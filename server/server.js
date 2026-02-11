@@ -2,6 +2,7 @@
    import express from 'express';
    import cors from 'cors'
    import 'dotenv/config' 
+   import orderRouter from './Routes/orderRoute.js';
    import ConnectDB from './Configs/DB.js';
    import userRouter from './Routes/userRouter.js';
    import sellerRoutes from './Routes/sellerRoutes.js';
@@ -9,15 +10,20 @@
    import ProductRoute from './Routes/ProductRoute.js';
    import cartRoute from './Routes/cartRoute.js';
    import addressRoute from './Routes/addressRoute.js';
-   import orderRouter from './Routes/orderRoute.js';
+import { stripeWebhooks } from './Controllers/orderController.js';
+
 
    const app = express();
    const port = process.env.PORT || 4000;
    await ConnectDB()
    await ConnectCloudinary();
-  
+     
    /////// Allow multiple origin ///////
    const allowedOrigins ='http://localhost:5173'
+    
+   app.post('/stripe',express.raw({type:'application/json'}),stripeWebhooks)
+
+
    ////Middleware configuration ////////////
    app.use(cors({
       origin:allowedOrigins,

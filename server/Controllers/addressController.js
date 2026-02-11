@@ -1,6 +1,4 @@
 
-
-
 ///Add Address :/api/address/add
 
 import { get } from "mongoose"
@@ -10,7 +8,9 @@ export const addAdress = async (req,res) => {
     try {
         const userId = req.userId
         const {address}= req.body
-        await Address.create({...address},userId)
+        await Address.create({
+            ...address,
+            userId})
         res.json({success:true, message:"Addrss Added successfully"})
     } catch (error) {
         console.log(error.message)
@@ -24,8 +24,8 @@ export const addAdress = async (req,res) => {
 export const getAddress = async (req,res)=>{
     try {
         const userId = req.userId
-        const addresses = await Address.findById(userId)
-        res.json({success:true, addresses})
+        const addresses = await Address.find({userId})
+        res.json({success:true,address: addresses})
     } catch (error) {
         console.log(error.message)
         res.json({success:false, message:error.message})

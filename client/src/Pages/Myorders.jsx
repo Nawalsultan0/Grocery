@@ -1,22 +1,34 @@
 import React from 'react'
 import {  useState} from "react";
 import { useAppContext } from '../Context/Appcontext';
-import { dummyOrders } from '../assets/assets';
 import { useEffect } from 'react';
 export default function Myorders() {
   
-      const {currency} = useAppContext()
+    const {currency,axios, user } = useAppContext()
 
     const [myorders, setmyorders] = useState([])
 
   
     const fetchMyorders = async ()=>{
-        setmyorders(dummyOrders)
+        try {
+            const {data} = await axios.get('/api/order/user')
+            
+            console.log("Backend Response:", data); // Check if success is true
+        if (data.success) {
+            console.log("Orders Array:", data.orders); // Chec
+                setmyorders(data.orders)
+            } 
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     useEffect(() => {
-      fetchMyorders()
-    }, [])
+        if(user){
+          fetchMyorders()
+        }
+     
+    }, [user])
     
 
 
@@ -27,7 +39,8 @@ export default function Myorders() {
         <div className='w-16 bg-primary h-0.5 rounded-full'></div>
     </div>
 {
-    myorders.map((order,index)=>(
+   myorders && myorders.length > 0 ?(
+   myorders.map((order,index)=>(
      <div key={index} className='border border-r-gray-300 rounded-lg mb-10 p-4 py-5 max-w-4xl  '>
         <p className=' flex justify-between  md:items-center text-gray-400 md:font-medium max-md:flex-col ' >
             <span>OrderId: {order._id}</span>
@@ -43,11 +56,11 @@ export default function Myorders() {
 
           <div  className=' flex  items-center  mb-4 md:mb-0' >
             <div  className=' bg-primary/10 p-4  rounded-lg' >
-                <img src={item.product.image[0]} alt="" className=' w-16 h-16' />
+                <img src={item.product?.image?.[0]  || ""  } alt="" className=' w-16 h-16' />
             </div>
             <div className=' ml-4 '>
-                <h2 className=' text-xl font-medium text-gray-800 '>{item.product.name}</h2>
-                <p className=''> Category:{item.product.category}</p>
+                <h2 className=' text-xl font-medium text-gray-800 '>{item.product?.name}</h2>
+                <p className=''> Category:{item.product?.category || "N/A"  }</p>
             </div>
           </div>
            
@@ -57,7 +70,7 @@ export default function Myorders() {
             <p>Date:{new Date(order.createdAt).toLocaleDateString()}</p>
            </div>
             <p className='  text-primary text-lg font-medium '>
-                Amount:{currency}{item.product.offerPrice * item.quantity}
+                Amount:{currency}{(item.product?.offerPrice || 0)*  item.quantity}
             </p>
 
          </div>
@@ -65,7 +78,7 @@ export default function Myorders() {
           }
 
      </div>
-    ))
+    )) ) :null
 }
     </div>
   )

@@ -16,7 +16,7 @@ export const AppContextProvider =({children})=>{
 
    
     const navigate = useNavigate();
-    const [user, setuser] = useState(false)
+    const [user, setuser] = useState(null)
     const [isSeller, setisSeller] = useState(true)
     const [showuserlogin, setshowuserlogin] = useState(false)
     
@@ -49,7 +49,9 @@ export const AppContextProvider =({children})=>{
             const {data} = await axios.get('/api/user/is-auth');
             if(data.success){
                 setuser(data.user)
-                setcarditem(data.user.carditem)
+              
+                // Access 'cardItems' from the user object returned by DB
+            setcarditem(data.user.cardItems || {});
             }
         } catch (error) {
             setuser(null)
@@ -72,30 +74,35 @@ export const AppContextProvider =({children})=>{
             toast.error(error.message)
         }
      }    
-    ////////Add Product to the card///////
+    ////////Add Product to the cart////////
     const addtocart =(itemID)=>{
-        let cardData = structuredClone(carditem)
+    
+        // Correctly initialize cardData from the previous state
+        let cardData = carditem? structuredClone(carditem) : {};
+
 
         if(cardData[itemID]){
             cardData[itemID] += 1;
         }
         else{
              cardData[itemID] = 1;
-        }
+        } 
         setcarditem(cardData);
+    
         toast.success("Added to Cart");
-        
+       
+          
     }
     /////update Items from card 
      const  updatetocart= (itemID,Quantity)=>{
-          let cardData =structuredClone(carditem);
+          let cardData = carditem? structuredClone(carditem) :{} ;
           cardData[itemID]=Quantity;
           setcarditem(cardData);
           toast.success("cart Updated");
      }
      /////remove Product from cart///
       const removetocart =(itemID)=>{
-        let cardData = structuredClone(carditem);
+        let cardData = carditem ? structuredClone(carditem) : {};
         if(cardData[itemID]){
         cardData[itemID]-=1;
         if(cardData[itemID]===0){
@@ -107,20 +114,20 @@ export const AppContextProvider =({children})=>{
       }
       /////Calculate total card items//////////////////////
       const getCarditems = ()=>{
-        let totalCount=0;
+        let totalCount = 0 ;
         for(const item in carditem){
-            totalCount +=carditem[item];
+            totalCount += carditem[item];
         }
-      return totalCount
+      return totalCount;
       }
 
       ////get carttotal amount ///////
       const getCartAmount =()=>{
-        let totalAmount=0;
+        let totalAmount = 0;
         for (const item in carditem){
             let itemInfo = products.find((product)=>product._id === item);
             if(carditem[item]>0){
-                totalAmount +=itemInfo.offerPrice * carditem[item]
+                totalAmount += itemInfo.offerPrice * carditem[item]
             }
         }
         return Math.floor(totalAmount*100)/100;
@@ -138,16 +145,19 @@ export const AppContextProvider =({children})=>{
             useEffect(()=>{
               const updateCart = async () => {
                 try {
-                    const {data}=await axios.post('/api/cart/update',{carditem} )
+                    const {data}=await axios.post('/api/cart/update',{cardItems:carditem} )
+
+                    console.log("Server Response:", data);
                     if(!data.success){
                         toast.error(data.message)
                     }
                 } catch (error) {
                            toast.error(error.message)
-                }
+                } 
               }
-              if(user){
+              if(user && Object.keys(carditem).length > 0){
                 updateCart()
+                
               }
             },[carditem])
 

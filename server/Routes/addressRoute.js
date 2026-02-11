@@ -4,6 +4,6 @@ import { addAdress, getAddress } from "../Controllers/addressController.js";
 
 const addressRoute=express.Router();
 addressRoute.post('/add',AuthUser, addAdress)
-addressRoute.post('/get',AuthUser, getAddress)
+addressRoute.get('/get',AuthUser, getAddress)
 
 export default addressRoute

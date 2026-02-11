@@ -6,12 +6,23 @@ import User from "../Modles/User.js"
 
 export  const updateCart =async (req,res)=>{
     try {
-        const userId = req.params.userId;
-        const {cartItems} = req.body;
-        await User.findByIdAndUpdate(userId,{cartItems})
-        res.json({ success:true,message:"Cart updated" })
-    } catch (error) {
-        console.log(error.message)
-         res.json({success:true, message: error.message})
+        const userId = req.userId;
+        const {cardItems} = req.body;        
+
+       const updatedUser=await User.findByIdAndUpdate(userId,{cardItems},{new:true})
+
+       // 2. Add a check to make sure the user exists
+        if (!updatedUser) {
+            return res.json({ success: false, message: "User not found" });
+        }
+        
+         return res.json(
+            { success:true,
+             message:"Cart updated",
+            cart: updatedUser.cardItems })
+        
+        } catch (error) {
+        console.log("Error in update Cart:", error.message);
+         return res.json({success:true, message: error.message})
     }
 }

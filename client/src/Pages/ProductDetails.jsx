@@ -9,8 +9,8 @@ import ProductCard from '../Components/ProductCard';
 export default function ProductDetails() {
     const {products, navigate,currency ,addtocart }= useAppContext();
     const {id} = useParams();
-const [thumbnail, setThumbnail] = useState(null);
-const [relestedproducts, setrelestedproducts] = useState([])
+    const [thumbnail, setThumbnail] = useState(null);
+    const [relestedproducts, setrelestedproducts] = useState([])
 
 const product = products.find((item)=>item._id === id)
 
@@ -43,7 +43,7 @@ return product && (
                     <div className="flex flex-col gap-3">
                         {product.image.map((image, index) => (
                             <div key={index} onClick={() => setThumbnail(image)} className="border max-w-24 border-gray-500/30 rounded overflow-hidden cursor-pointer" >
-                                <img src={image} alt={`Thumbnail ${index + 1}`} />
+                                <img   src={image} alt={`Thumbnail ${index + 1}`} />
                             </div>
                         ))}
                     </div>
@@ -68,8 +68,8 @@ return product && (
                     </div>
 
                     <div className="mt-6">
-                        <p className="text-gray-500/70 line-through">$: {currency}{product.price}</p>
-                        <p className="text-2xl font-medium">$: {currency}{product.offerPrice}</p>
+                        <p className="text-gray-500/70 line-through">{currency}{product.price}</p>
+                        <p className="text-2xl font-medium"> {currency}{product.offerPrice}</p>
                         <span className="text-gray-500/70">(inclusive of all taxes)</span>
                     </div>
 

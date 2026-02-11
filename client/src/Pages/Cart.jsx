@@ -1,49 +1,93 @@
 import React, { useState } from 'react'
 import { useAppContext } from '../Context/Appcontext'
-import { assets, dummyAddress } from '../assets/assets';
+import { assets,  } from '../assets/assets';
 import { useEffect } from 'react';
+import {Link} from 'react-router-dom'
+import toast from 'react-hot-toast';
+
+
 
 export default function Cart() {
   
-   const {products,currency,getCarditems,carditem,removetocart,navigate,updatetocart,getCartAmount} = useAppContext()
+   const {products,axios,currency,getCarditems,carditem,setcarditem,removetocart,
+    navigate,updatetocart,getCartAmount,user} = useAppContext()
 
     /////add products avalaible in the cart///////
     const [cartArray, setcartArray] = useState([]);
-
+  
     ///////get assests from our assests////////////
-    const [address, setaddress] = useState(dummyAddress)
+    const [address, setaddress] = useState([])
     const [showAddress, setShowAddress] = useState(false)
-    const [selectAddress, setselectAddress] = useState(dummyAddress[0]);
+    const [selectAddress, setselectAddress] = useState(null);
     const [paymentOption, setpaymentOption] = useState("COD")
 
+  
 
+    const getCart = () => {
+    let tempArray = [];
+    for (const key in carditem) {
+        if (carditem[key] > 0) { // Only add items with quantity > 0
+            const product = products.find((item) => item._id === key);
+            if (product) {
 
-    const getCart =()=>{
-        let tempArray =[];
-        for (const key in carditem){
-            const product =products.find((item)=>item._id === key )
-            product.quantity =carditem[key]
-            tempArray.push(product);
+                
+                // Create a shallow copy to avoid mutating the original products state
+                tempArray.push({ ...product, quantity: carditem[key] });
+            }
         }
-       setcartArray(tempArray)
     }
+    setcartArray(tempArray);
+}
+     
+
+
+const getUserAddress = async ()=>{
+try {
+    const { data } = await axios.get('/api/address/get');
+    if(data.success){
+         setaddress(data.address)
+         if(data.address?.length > 0 ){
+            setselectAddress(data.address[0])
+         }
+    }
+    else{
+        toast.error(data.message)
+    }
+} catch (error) {
+    toast.error(error.message)
+}
+}
+
+ 
+
+
+
 
     useEffect(() => {
-     if(products.length >0 && carditem){
+
+     if(products.length > 0 && carditem){
        getCart()
      }
     }, [products, carditem])
-    
-    const PlaceOrder =()=>{
-
-    }
 
 
-    return products.length >0 && carditem ? (
+
+ useEffect(() => {    
+     if(user  ){
+       getUserAddress()
+     }
+    }, [user])
+
+
+
+
+    return products?.length >0 && carditem ? 
+    (
         <div className="flex flex-col md:flex-row  mt-16">
             <div className='flex-1 max-w-4xl'>
                 <h1 className="text-3xl font-medium mb-6">
-                    Shopping Cart <span className="text-sm text-primary">{getCarditems()} Items</span>
+                    Shopping Cart <span className="text-sm text-primary">
+                        {getCarditems()} Items</span>
                 </h1>
 
                 <div className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 text-base font-medium pb-3">
@@ -51,8 +95,10 @@ export default function Cart() {
                     <p className="text-center">Subtotal</p>
                     <p className="text-center">Action</p>
                 </div>
-
-                {cartArray.map((product, index) => (
+        
+                {cartArray.map((product, index) =>{ 
+                    if(!product) return null
+                    return (
                     <div key={index} className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3">
                         <div className="flex items-center md:gap-6 gap-3">
                             <div className="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded overflow-hidden">
@@ -82,12 +128,12 @@ export default function Cart() {
                          className="cursor-pointer mx-auto">
                             <img src={assets.remove_icon} alt="Remove" className=' inline-block w-6 h-6'/>
                         </button>
-                    </div>)
-                )}
-
+                    </div>)}
+              )}
+                    
                 <button onClick={()=>{
                     navigate("/products");scrollTo(0,0)
-                }} className="group cursor-pointer flex items-center mt-8 gap-2 text-primary     font-medium">
+                }} className="group cursor-pointer flex items-center mt-8 gap-2 text-primary font-medium">
                     <img src={assets.arrow_right_icon_colored} alt="Arrow" 
                     className=' group-hover:-translate-x-1 transition  motion-safe:animate-ping' />
                     Continue Shopping
@@ -109,13 +155,14 @@ export default function Cart() {
                         </button>
                         {showAddress && (
                             <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
-                                { address.map((address,index)=>(
-                                    <p onClick={() => {setselectAddress(address); setShowAddress(false)}} className="text-gray-500 p-2 hover:bg-gray-100">
+                             {  address && address.map((address,index)=>(
+                                    <p key={index} onClick={() => {setselectAddress(address); setShowAddress(false)}} className="text-gray-500 p-2 hover:bg-gray-100">
                                      {address.street},{address.city},{address.state},{address.country}
                                    </p>
                                 )) 
                             }  
-                               <p onClick={() => navigate("/add-address")} className="text-primary/10 text-center cursor-pointer p-2 hover:bg-indigo-500/10">
+                               <p onClick={() => navigate("/add-address")} 
+                               className="text-black text-center cursor-pointer p-2 hover:bg-indigo-500/10">
                                    Add address 
                                 </p>
                             </div>
@@ -147,10 +194,11 @@ export default function Cart() {
                     </p>
                 </div>
 
-                <button onClick={PlaceOrder()}
-                className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
+                <button onClick={placeOrder}     
+                    className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
                     {paymentOption === "COD"? "Place Order" :"Proceed to Checkout"     }
-                </button>
+                      
+                </button>   
             </div>
         </div>
     ):null

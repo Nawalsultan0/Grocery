@@ -1,11 +1,12 @@
 import React from 'react'
 import { assets } from '../assets/assets';
-import { useAppContext } from '../Context/Appcontext';
+import { AppContext, useAppContext } from '../Context/Appcontext';
 import { dummyProducts } from '../assets/assets';
+import { useContext } from 'react';
 
 export default function ProductCard({product}) {
 
-    const {currency,addtocart,updatetocart,removetocart, navigate,carditem}= useAppContext();
+    const {currency,addtocart,updatetocart,removetocart, navigate,carditem}= useContext(AppContext);
    
  
     return product &&(
@@ -34,7 +35,7 @@ export default function ProductCard({product}) {
                     <div onClick={(e)=>{
                         e.stopPropagation();
                     }}  className="text-primary">
-                        {!carditem [product._id] ? ( 
+                        {(!carditem || !carditem[product._id])? ( 
                             <button className="flex items-center justify-center gap-1 bg-gray-100 border border-primary md:w-[80px] w-[64px] h-[34px] rounded text-shadow-primary-dull font-medium  cursor-pointer "
                              onClick={() => addtocart(product._id)} >
                                 <img src={assets.cart_icon} alt="Cart icon" className='' />

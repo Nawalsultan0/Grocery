@@ -1,17 +1,27 @@
-import React from 'react'
-import { useAppContext } from '../../Context/AppContext'
+import React, { useContext } from 'react'
+import { AppContext, useAppContext } from '../../Context/AppContext'
 import { useState,useEffect } from 'react';
 import { assets, dummyOrders } from '../../assets/assets';
+import toast from 'react-hot-toast';
 
 
 export default function Orders() {
  
-  const {currency } = useAppContext();
+  const {currency, axios  } = useContext(AppContext);
 
   const [orders, setorders] = useState([]);
 
   const fetchorders = async()=>{
-    setorders(dummyOrders)
+   try {
+    const {data} = await axios.get('/api/order/seller')
+    if(data.success){
+        setorders(data.orders)
+    }else{
+        toast.error(data.message)
+    }
+   } catch (error) {
+        toast.error(error.message)
+   }
   }
    
   useEffect(() => {
@@ -34,7 +44,7 @@ export default function Orders() {
                             {order.items.map((item, index) => (
                                 <div key={index} className="flex flex-col ">
                                     <p className="font-medium">
-                                        {item.product.name}{" "}
+                                        {item.product?.name || ""}{" "}
                                          <span className='text-primary'>x{item.quantity}</span>
                                     </p>
                                 </div>

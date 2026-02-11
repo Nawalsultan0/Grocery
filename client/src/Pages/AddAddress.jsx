@@ -11,6 +11,7 @@ const InputField = ({type, placeholder,name, handleChange,address })=>(
     <input className='w-full px-2 py-2.5 border border-gray-500/30 roudeed outline-none
     text-gray-500 focus:border-primary transition'
      type={type} 
+     name={name}
      placeholder={placeholder}
      onChange={handleChange}
      value={address[name]} 
@@ -63,12 +64,12 @@ export default function AddAddress () {
         if(!user){
           navigate('/cart')
         }
-       },[])
+       },[user,navigate])
 
 
   return (
     <div className='mt-16  pb-16'>
-        <p className='text-2xl md:text-3xl text-gray-500  '>Add Shipping
+        <div className='text-2xl md:text-3xl text-gray-500  '>Add Shipping
         <span  className='font-semibold text-primary' > Address</span>
         <div className=' w-26 h-0.5 bg-primary'></div>
         <div className='flex flex-col-reverse  md:flex-row justify-between mt-10 '>
@@ -77,11 +78,11 @@ export default function AddAddress () {
 
           {/*2 inputs that are first name and last name */}
 
-         <div className='grid grid-cols-2 gsp-4' >
+         <div className='grid grid-cols-2 gap-4' >
             <InputField handleChange={handleChange} address={address} name='firstName'
              type='text' placeholder="First Name" />
-            <InputField handleChange={handleChange} address={address} name='firstName'
-             type='text' placeholder="First Name" />
+            <InputField handleChange={handleChange} address={address} name='lastName'
+             type='text' placeholder="last Name" />
          </div>
            <InputField handleChange={handleChange} address={address} name='email'
              type='email' placeholder="Email Address"/>
@@ -114,7 +115,7 @@ export default function AddAddress () {
         </div>
         <img src={assets.add_address_iamge} alt="Address" className='md:mr-16 mb-16 md:mt-0' />
         </div>
-        </p>
+        </div>
 
     </div>
   )

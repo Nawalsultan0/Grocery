@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink,Link } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import { useAppContext } from '../Context/AppContext'
 import { useEffect } from 'react'
@@ -43,9 +43,9 @@ export default function Navbar() {
 
             {/* Desktop Menu */}
             <div className="hidden sm:flex items-center gap-8">
-                <NavLink to="/">Home</NavLink>
-                  <NavLink to="/products">All products</NavLink>
-                    <NavLink to="/">Contact</NavLink>
+                <Link to="/">Home</Link>
+                  <Link to="/products">All products</Link>
+                    <Link to="/">Contact</Link>
               
                 
                 <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
@@ -56,7 +56,7 @@ export default function Navbar() {
                 </div>
 
                  
-                <div onClick={()=>navigate("/cart")} className="relative cursor-pointer">
+                <div onClick={()=>navigate('/cart')} className="relative cursor-pointer">
                   <img src={assets.nav_cart_icon} alt="Cart icon" className='  w-6 opacity-80' />
                     <button className="absolute -top-2 -right-3 text-xs text-white
                      bg-primary w-[18px] h-[18px] rounded-full">{getCarditems()}</button>
@@ -95,12 +95,12 @@ export default function Navbar() {
             {/* Mobile Menu */}
             { open && (    
             <div className={`${open ? 'flex' : 'hidden'} absolute top-[60px] left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden`}>
-                <NavLink to='/' onClick={()=>setOpen(false)}>Home</NavLink>
-                <NavLink to='/products' onClick={()=>setOpen(false)} >All products</NavLink>
+                <Link to='/' onClick={()=>setOpen(false)}>Home</Link>
+                <Link to='/products' onClick={()=>setOpen(false)} >All products</Link>
                 { user && 
-                <NavLink to='/products' onClick={()=>setOpen(false)}>My Orders</NavLink>
+                <Link to='/products' onClick={()=>setOpen(false)}>My Orders</Link>
                  }
-                 <NavLink to='/' onClick={()=>setOpen(false)}>Contact</NavLink>
+                 <Link to='/' onClick={()=>setOpen(false)}>Contact</Link>
 
                  {!user? (
                  <button onClick={()=>{

@@ -13,7 +13,7 @@ export default function SellerLayOut() {
     const sidebarLinks = [
         { name: "Dashboard", path: "/seller", icon: assets.add_icon },
         { name: "Overview", path: "/seller/Product-list", icon: assets.product_list_icon },
-        { name: "Chat", path: "/seller/orders", icon:assets.order_icon },
+        { name: "Orders", path: "/seller/orders", icon:assets.order_icon },
     ];
     
     const logout = async ()=> {

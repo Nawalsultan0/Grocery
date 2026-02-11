@@ -20,7 +20,8 @@ export const register = async(req,res)=>{
  
         const  hashedpassword = await bcrypt.hash(password,10);
          
-         const user = await User.create({name:name.trim(),email:email.trim(),password:hashedpassword});
+         const user = await User.create({name:name.trim(),email:email.trim(),
+            password:hashedpassword});
          user.save();
          
               

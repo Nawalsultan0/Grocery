@@ -17,6 +17,7 @@ import SellerLayOut from './Pages/Seller/SellerLayOut'
 import AddProduct from './Pages/Seller/AddProduct'
 import ProductList from './Pages/Seller/ProductList'
 import Orders from './Pages/Seller/Orders'
+import Loading from './Components/Loading'
 
 export default function App() {
 
@@ -40,6 +41,9 @@ export default function App() {
           <Route path='/cart' element={<Cart/>}/>
           <Route path='/add-address' element={<AddAddress/>}/>
           <Route path='/my-orders' element={<Myorders/>}/>
+          
+          <Route path='/loader' element={<Loading/>}/>
+          
           <Route path='/seller' element={isSeller ? <SellerLayOut/> : <SellerLogin/> } >
           <Route index element={ isSeller? <AddProduct/> : null} />
           <Route path='product-list' element={<ProductList/>} />
