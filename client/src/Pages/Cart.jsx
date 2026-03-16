@@ -58,7 +58,64 @@ try {
 }
 }
 
- 
+ const placeOrder = async () => {
+    try {
+        // Validation: Ensure an address is selected
+        if (!selectAddress) {
+            return toast.error("Please select a delivery address");
+        }
+
+        // Prepare order items in the format the backend expects
+        let orderItems = [];
+        for (const productId in carditem) {
+            if (carditem[productId] > 0) {
+                orderItems.push({
+                    product: productId,
+                    quantity: carditem[productId]
+                });
+            }
+        }
+
+        // Calculate total amount (Price + 2% Tax)
+        const totalAmount = getCartAmount() + (getCartAmount() * 2 / 100);
+
+        // Common order data for both payment methods
+        const orderData = {
+            address: selectAddress,
+            items: orderItems,
+            amount: totalAmount,
+        };
+
+        if (paymentOption === "COD") {
+            // Logic for Cash on Delivery
+            const { data } = await axios.post('/api/order/cod', orderData);
+            
+            if (data.success) {
+                toast.success(data.message);
+                setcarditem({}); // Clear the cart state locally
+                navigate('/my-orders');
+            } else {
+                toast.error(data.message);
+            }
+
+        } else if (paymentOption === "Online") {
+            // Logic for Stripe Payment
+            const { data } = await axios.post('/api/order/stripe', orderData);
+            
+            if (data.success) {
+                // Redirect user to Stripe's secure checkout page
+                const { session_url } = data;
+                window.location.replace(session_url);
+            } else {
+                toast.error(data.message);
+            }
+        }
+
+    } catch (error) {
+        console.error(error);
+        toast.error(error.response?.data?.message || error.message);
+    }
+}
 
 
 

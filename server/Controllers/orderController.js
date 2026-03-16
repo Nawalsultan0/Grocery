@@ -157,7 +157,7 @@ export const placeOrderSTRIPE = async (req,res) => {
   try {
      const userId=req.userId;
         const {items ,address}= req.body;
-        const {origin} = req.headers;
+        const origin = req.headers.origin;
          
         if(!address || !items || items.length === 0){
             return res.json({success:false, message:"Invalid data"})
@@ -233,10 +233,10 @@ export const placeOrderSTRIPE = async (req,res) => {
               }     
             })
 
-        return res.json({success: true , url: session.url})
+        return res.json({success: true , session_url: session.url})
 
   } catch (error) {
-      return res.json({success: true , message: error.message })  
+      return res.json({success: false , message: error.message })  
   }
 }
 

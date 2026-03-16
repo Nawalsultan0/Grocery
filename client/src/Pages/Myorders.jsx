@@ -39,14 +39,15 @@ export default function Myorders() {
         <div className='w-16 bg-primary h-0.5 rounded-full'></div>
     </div>
 {
-   myorders && myorders.length > 0 ?(
+   myorders && myorders?.length > 0 ?(
    myorders.map((order,index)=>(
      <div key={index} className='border border-r-gray-300 rounded-lg mb-10 p-4 py-5 max-w-4xl  '>
         <p className=' flex justify-between  md:items-center text-gray-400 md:font-medium max-md:flex-col ' >
+           
             <span>OrderId: {order._id}</span>
-            <span>Payment: {order.paymentType}</span>
+            <span>Payment: {order?.paymentType || "COD" }</span>
             <span>Total Amount:{currency}{order.amount}</span>
-         </p>
+         </p>   
          {/*used item bcz usedd items in the dummy order */}
           { order.items.map((item,index)=>(
          <div key={index} className={` relative bg-white text-gray-500/70  ${
@@ -54,7 +55,7 @@ export default function Myorders() {
          } border-gray-300 flex flex-col md:flex-row md:items-center justify-between 
          p-4 py-5 md:gap-16 w-full max-w-4xl   `} >
 
-          <div  className=' flex  items-center  mb-4 md:mb-0' >
+          <div  className=' flex  items-center mb-4 md:mb-0' >
             <div  className=' bg-primary/10 p-4  rounded-lg' >
                 <img src={item.product?.image?.[0]  || ""  } alt="" className=' w-16 h-16' />
             </div>
