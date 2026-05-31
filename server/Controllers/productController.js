@@ -61,9 +61,11 @@ try {
 //change product inStock :/api/product/stock
 export const changeStock = async(req,res)=>{
 try {
-    const userId = req.userId
-    const { inStock } = req.body;
-    await Product.findByIdAndUpdate(userId,{inStock})
+    const { id, inStock } = req.body;
+    if (!id) {
+      return res.json({ success: false, message: 'Product id is required' });
+    }
+    await Product.findByIdAndUpdate(id, { inStock });
     res.json({success:true, message:'Stock Updated'})
 } catch (error) {
       console.log(error.message);
