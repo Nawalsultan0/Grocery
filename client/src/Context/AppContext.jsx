@@ -155,9 +155,8 @@ export const AppContextProvider =({children})=>{
                            toast.error(error.message)
                 } 
               }
-              if(user && Object.keys(carditem).length > 0){
+              if(user){
                 updateCart()
-                
               }
             },[carditem])
 
@@ -171,7 +170,7 @@ export const AppContextProvider =({children})=>{
          products,currency,
          addtocart,updatetocart,removetocart,searchQuery,
          setsearchQuery,getCartAmount,getCarditems,
-         axios, fetchProducts
+         axios, fetchProducts, fetchUser
           };
 return <AppContext.Provider value={value} >
     {children}

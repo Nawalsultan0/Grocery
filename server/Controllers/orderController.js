@@ -63,7 +63,7 @@ export const stripeWebhooks = async (req,res) => {
  /// stripe Gateway Initialize
       const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY) ;
       
-      const sig = requestAnimationFrame.headers["stripe-signature"]
+      const sig = req.headers["stripe-signature"]
       let event ;
       try {
         event = stripeInstance.webhooks.constructEvent(
@@ -77,6 +77,13 @@ export const stripeWebhooks = async (req,res) => {
       }
     ///// handle the event 
       switch (event.type) {
+        case "checkout.session.completed":{
+          const session = event.data.object;
+          const { orderId, userId } = session.metadata;
+          await Order.findByIdAndUpdate(orderId,{isPaid: true});
+          await User.findByIdAndUpdate(userId,{cardItems:{}});
+          break;
+        }
         case "payment_intent.succeeded":{
           const paymentIntent = event.data.object;
           const paymentIntentId=paymentIntent.id
@@ -93,7 +100,7 @@ export const stripeWebhooks = async (req,res) => {
              await User.findByIdAndUpdate(userId,{cardItems:{}})
              break;
         }
-         case "payment_intent.succeeded":{ 
+         case "payment_intent.payment_failed":{ 
             const paymentIntent = event.data.object;
           const paymentIntentId=paymentIntent.id
 
@@ -124,8 +131,7 @@ export const getUserOrders  = async (req, res) => {
       
         const userId= req.userId;
         const orders = await Order.find({
-            userId,
-            $or:[{paymentType:"COD"},{isPaid:true}]
+            userId
         }).populate("items.product")    
           .sort({ createdAt:-1 });
         res.json({success:true,orders});

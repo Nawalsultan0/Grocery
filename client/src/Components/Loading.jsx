@@ -2,11 +2,10 @@ import React from 'react'
 import { useAppContext } from '../Context/Appcontext'
 import { useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
-import { useEffectEvent } from 'react'
 
 const Loading = () => {
    
-  const {navigate} =useAppContext()
+  const {navigate, axios, user, setcarditem, fetchUser} = useAppContext()
   let { search  } =useLocation()
   const query = new URLSearchParams(search)
   const nextUrl = query.get('next');
@@ -14,11 +13,23 @@ const Loading = () => {
 
   useEffect(()=>{
    if(nextUrl){
+    const clearCart = async () => {
+      setcarditem({});
+      if(user){
+        try {
+          await axios.post('/api/cart/update',{cardItems:{}})
+          await fetchUser()
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+    clearCart();
     setTimeout(()=>{
       navigate(`/${nextUrl}`)
     },5000)
    }
-  },[nextUrl])
+  },[nextUrl, user, navigate, axios, fetchUser, setcarditem])
 
 
   return (
