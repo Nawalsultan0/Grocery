@@ -14,7 +14,7 @@ export default function Loginfoam() {
      try {
         e.preventDefault(); 
       
-     const {data} = await axios.post(`api/user/${state}`,{
+     const {data} = await axios.post(`/api/user/${state}`,{
         name,
         email,
         password
