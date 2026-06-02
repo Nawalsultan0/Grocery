@@ -1,7 +1,7 @@
 import React from 'react'
 import { assets } from '../assets/assets'
 import { useState } from 'react';
-import { useAppContext } from '../Context/Appcontext';
+import { useAppContext } from '../Context/AppContext';
 import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 

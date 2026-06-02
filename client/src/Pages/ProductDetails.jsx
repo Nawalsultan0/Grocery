@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState,useEffect } from 'react';
-import { useAppContext } from '../Context/Appcontext';
+import { useAppContext } from '../Context/AppContext';
 import { Link, useParams } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import ProductCard from '../Components/ProductCard';

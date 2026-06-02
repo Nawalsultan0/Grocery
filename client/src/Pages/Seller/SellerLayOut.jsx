@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useAppContext } from '../../Context/Appcontext';
+import { useAppContext } from '../../Context/AppContext';
 import { assets } from '../../assets/assets';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import toast from 'react-hot-toast';

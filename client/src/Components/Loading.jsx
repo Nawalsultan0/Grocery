@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAppContext } from '../Context/Appcontext'
+import { useAppContext } from '../Context/AppContext'
 import { useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 

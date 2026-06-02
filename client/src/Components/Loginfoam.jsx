@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAppContext } from '../Context/Appcontext';
+import { useAppContext } from '../Context/AppContext';
 import toast from 'react-hot-toast';
 
 export default function Loginfoam() {

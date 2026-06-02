@@ -1,6 +1,6 @@
 import React from 'react'
 import { assets } from '../assets/assets';
-import { AppContext, useAppContext } from '../Context/Appcontext';
+import { AppContext, useAppContext } from '../Context/AppContext';
 import { dummyProducts } from '../assets/assets';
 import { useContext } from 'react';
 

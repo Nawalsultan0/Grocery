@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useAppContext } from '../Context/Appcontext'
+import { useAppContext } from '../Context/AppContext'
 import { useState } from 'react';
 import ProductCard from '../Components/ProductCard';
 
