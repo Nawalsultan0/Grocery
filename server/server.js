@@ -19,19 +19,25 @@ import { stripeWebhooks } from './Controllers/orderController.js';
    await ConnectCloudinary();
      
    /////// Allow multiple origin ///////
-   const allowedOrigins ='http://localhost:5173'
+   const allowedOrigins = [
+     process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+     'https://greencart-one-brown.vercel.app'
+   ];
     
    app.post('/stripe',express.raw({type:'application/json'}),stripeWebhooks)
 
 
    ////Middleware configuration ////////////
    app.use(cors({
-      origin:allowedOrigins,
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('CORS policy: Origin not allowed'));
+        }
+      },
       credentials:true
-       
-    },
-
-   ));
+    }));
 
 
    app.use(express.json());
