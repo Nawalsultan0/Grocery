@@ -3,13 +3,23 @@ import User from "../Modles/User.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+const isProduction =
+  process.env.NODE_ENV === 'production' ||
+  process.env.VERCEL === '1' ||
+  process.env.VERCEL_ENV === 'production';
+
 const cookieOptions = {
   httpOnly: true,
   secure: isProduction,
   sameSite: isProduction ? 'none' : 'strict',
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
+
+if (isProduction) {
+  console.log('Cookie production mode enabled: secure, SameSite=None');
+} else {
+  console.log('Cookie development mode: secure false, SameSite=Strict');
+}
 
 ////Register user: /api/user/register
 export const register = async(req,res)=>{
