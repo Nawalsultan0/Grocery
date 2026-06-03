@@ -6,6 +6,10 @@ const  ConnectDB = async ()=>{
         process.exit(1);
     }
 
+    if (mongoose.connection.readyState >= 1) {
+        return;
+    }
+
     try {
         mongoose.connection.on('connected',() =>
             console.log("database is connected")

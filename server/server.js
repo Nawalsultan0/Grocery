@@ -53,7 +53,10 @@ import { stripeWebhooks } from './Controllers/orderController.js';
    app.use('/api/address', addressRoute )
    app.use('/api/order',orderRouter)
 
-   
-   app.listen(port,()=>{
-    console.log(`server is running on http://localhost:${port}`)
-   })
+   if (process.env.VERCEL !== '1') {
+     app.listen(port,()=>{
+       console.log(`server is running on http://localhost:${port}`)
+     })
+   }
+
+export default app;
