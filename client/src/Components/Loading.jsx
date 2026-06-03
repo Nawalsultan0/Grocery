@@ -1,34 +1,37 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useAppContext } from '../Context/AppContext'
 import { useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
 
 const Loading = () => {
    
   const {navigate, axios, user, setcarditem, fetchUser} = useAppContext()
-  let { search  } =useLocation()
+  const effectRan = useRef(false)
+  const { search  } = useLocation()
   const query = new URLSearchParams(search)
   const nextUrl = query.get('next');
 
 
   useEffect(()=>{
-   if(nextUrl){
-    const clearCart = async () => {
-      setcarditem({});
-      if(user){
-        try {
-          await axios.post('/api/cart/update',{cardItems:{}})
-          await fetchUser()
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    }
-    clearCart();
-    setTimeout(()=>{
-      navigate(`/${nextUrl}`)
-    },5000)
+   if(!nextUrl || effectRan.current) return;
+   effectRan.current = true;
+
+   const clearCart = async () => {
+     setcarditem({});
+     if(user){
+       try {
+         await axios.post('/api/cart/update',{cardItems:{}})
+         await fetchUser()
+       } catch (error) {
+         console.error(error)
+       }
+     }
    }
+   clearCart();
+   const timer = setTimeout(()=>{
+     navigate(`/${nextUrl}`)
+   },5000)
+
+   return () => clearTimeout(timer)
   },[nextUrl, user, navigate, axios, fetchUser, setcarditem])
 
 
