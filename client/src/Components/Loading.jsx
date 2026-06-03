@@ -12,7 +12,7 @@ const Loading = () => {
   const nextUrl = query.get('next')
 
   useEffect(() => {
-    if (!nextUrl || effectRan.current) return
+    if (effectRan.current) return
     effectRan.current = true
 
     const clearCart = async () => {
@@ -27,12 +27,10 @@ const Loading = () => {
       }
     }
 
-    clearCart()
-    const timer = setTimeout(() => {
-      navigate(`/${nextUrl}`, { replace: true })
-    }, 5000)
-
-    return () => clearTimeout(timer)
+    const target = nextUrl ? `/${nextUrl}` : '/my-orders'
+    clearCart().finally(() => {
+      navigate(target, { replace: true })
+    })
   }, [nextUrl, user, axios, fetchUser, setcarditem, navigate])
 
   return (
