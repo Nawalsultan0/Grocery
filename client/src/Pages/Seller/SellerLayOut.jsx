@@ -17,13 +17,13 @@ export default function SellerLayOut() {
     ];
     
     const logout = async ()=> {
-        
         try {
             const {data} = await axios.get('/api/seller/logout')
             if(data.success){
+                setisSeller(false)
                 toast.success(data.message)
                 navigate('/')
-            }else{
+            } else {
                 toast.error(data.message)
             }
         } catch (error) {

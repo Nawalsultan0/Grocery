@@ -4,6 +4,13 @@
 
 import jwt from "jsonwebtoken";
 
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || process.env.VERCEL_ENV === 'production';
+const sellerCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
 
 export const sellerLogin = async (req,res)=>{
 
@@ -12,13 +19,7 @@ export const sellerLogin = async (req,res)=>{
         if(password === process.env.SELLER_PASSWORD && email === process.env.SECRET_EMAIL){
             const token = jwt.sign({email},process.env.JWT_SECRET, {expiresIn:'7d'});
             
-          res.cookie('sellerToken',token,{
-          httpOnly:true, ///prevent JavaScript to access cookies  
-         secure:process.env.NODE_ENV === 'production', ///use secure cookies in production 
-         sameSite:process.env.NODE_ENV === 'production'?'none':'strict',
-        ///help us secure from CSRF prodduction////
-        maxAge:7 * 24 * 60 * 1000, ///cookie expiration date
-        });
+          res.cookie('sellerToken',token,sellerCookieOptions)
         return res.json({success:true,message:'Logged In'});
         }
         else{
@@ -49,11 +50,7 @@ try{
 
 export const sellerlogOut = async(req,res)=>{
     try {
-        res.clearCookie('sellerToken',{
-            httpOnly:true,
-            secure:process.env.NODE_ENV === 'production',
-            sameSite:process.env.NODE_ENV === 'production'?'none':'strict',
-        });
+        res.clearCookie('sellerToken', sellerCookieOptions);
         return res.json({success:true,message:"Logged Out"})
     } catch (error) {
     console.log(error.message);
