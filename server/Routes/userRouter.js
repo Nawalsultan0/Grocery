@@ -9,4 +9,7 @@ userRouter.post('/login',login);
 userRouter.get('/is-auth',AuthUser,Auth);
 userRouter.get('/logout',AuthUser, logOut);
 
-export default userRouter;
+export default userRouter;const token = req.cookies?.token;
+if (!token) {
+  return res.json({ success:false, message:"Not Authorized Login Again" });
+}

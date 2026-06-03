@@ -3,6 +3,13 @@ import User from "../Modles/User.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'strict',
+  maxAge: 7 * 24 * 60 * 1000,
+};
 
 ////Register user: /api/user/register
 export const register = async(req,res)=>{
@@ -27,13 +34,7 @@ export const register = async(req,res)=>{
               
         const token =jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'7d'}) 
 
-        res.cookie('token',token,{
-        httpOnly:true, ///prevent JavaScript to access cookies  
-        secure:process.env.NODE_ENV === 'production', ///use secure cookies in production 
-        sameSite:process.env.NODE_ENV === 'production'?'none':'strict',
-        ///help us secure from CSRF prodduction////
-        maxAge:7*24*60*1000 ///cookie expiration date
-        })
+        res.cookie('token',token,cookieOptions)
          
        return res.json({success:true, user:{name: user.name,email: user.email}});
        } catch (error) {
@@ -62,13 +63,7 @@ export const login = async(req,res)=>{
            }
             const token =jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'7d'}) 
 
-          res.cookie('token',token,{
-          httpOnly:true, ///prevent JavaScript to access cookies  
-         secure:process.env.NODE_ENV === 'production', ///use secure cookies in production 
-         sameSite:process.env.NODE_ENV === 'production'?'none':'strict',
-        ///help us secure from CSRF prodduction////
-        maxAge:7 * 24 * 60 * 1000, ///cookie expiration date
-        })
+          res.cookie('token',token,cookieOptions)
          
        return res.json({success:true, user:{name: user.name,email: user.email},});
 
@@ -100,9 +95,7 @@ try{
 export const logOut = async(req,res)=>{
     try {
         res.clearCookie('token',{
-            httpOnly:true,
-            secure:process.env.NODE_ENV === 'production',
-            sameSite:process.env.NODE_ENV === 'production'?'none':'strict',
+            ...cookieOptions,
         });
         return res.json({success:true,message:"Logged Out"})
     } catch (error) {
