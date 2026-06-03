@@ -1,39 +1,39 @@
 import React, { useEffect, useRef } from 'react'
 import { useAppContext } from '../Context/AppContext'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const Loading = () => {
    
-  const {navigate, axios, user, setcarditem, fetchUser} = useAppContext()
+  const { axios, user, setcarditem, fetchUser } = useAppContext()
+  const navigate = useNavigate()
   const effectRan = useRef(false)
   const { search  } = useLocation()
   const query = new URLSearchParams(search)
-  const nextUrl = query.get('next');
+  const nextUrl = query.get('next')
 
+  useEffect(() => {
+    if (!nextUrl || effectRan.current) return
+    effectRan.current = true
 
-  useEffect(()=>{
-   if(!nextUrl || effectRan.current) return;
-   effectRan.current = true;
+    const clearCart = async () => {
+      setcarditem({})
+      if (user) {
+        try {
+          await axios.post('/api/cart/update', { cardItems: {} })
+          await fetchUser()
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
 
-   const clearCart = async () => {
-     setcarditem({});
-     if(user){
-       try {
-         await axios.post('/api/cart/update',{cardItems:{}})
-         await fetchUser()
-       } catch (error) {
-         console.error(error)
-       }
-     }
-   }
-   clearCart();
-   const timer = setTimeout(()=>{
-     navigate(`/${nextUrl}`)
-   },5000)
+    clearCart()
+    const timer = setTimeout(() => {
+      navigate(`/${nextUrl}`, { replace: true })
+    }, 5000)
 
-   return () => clearTimeout(timer)
-  },[nextUrl, user, navigate, axios, fetchUser, setcarditem])
-
+    return () => clearTimeout(timer)
+  }, [nextUrl, user, axios, fetchUser, setcarditem, navigate])
 
   return (
     <div className='flex justify-center items-center h-screen'>
