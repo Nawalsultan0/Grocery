@@ -73,7 +73,7 @@ export const stripeWebhooks = async (req,res) => {
 
         );
       } catch (error) {
-        res.status(400).send(`Webhook Error: ${error.message}`)
+        return res.status(400).send(`Webhook Error: ${error.message}`)
       }
     ///// handle the event 
       switch (event.type) {
@@ -163,7 +163,7 @@ export const placeOrderSTRIPE = async (req,res) => {
   try {
      const userId=req.userId;
         const {items ,address}= req.body;
-        const origin = req.headers.origin;
+        const origin = req.headers.origin || process.env.CLIENT_ORIGIN || 'http://localhost:5173';
          
         if(!address || !items || items.length === 0){
             return res.json({success:false, message:"Invalid data"})
@@ -216,13 +216,14 @@ export const placeOrderSTRIPE = async (req,res) => {
         
         ////create item items for stripe
         const line_items = productData.map((item)=>{
+          const unitAmount = Math.round((item.price * 1.02) * 100);
           return{
             price_data:{
               currency: "usd",
               product_data:{
                 name:item.name,
               },
-              unit_amount: Math.floor(item.price + item.price * 0.02) * 100
+              unit_amount: unitAmount
             },
             quantity: item.quantity,
           }
